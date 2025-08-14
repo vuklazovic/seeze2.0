@@ -1,0 +1,946 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "get_car_deals",
+            "description": "Get car deals using filters with operator and value/min/max for each field.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "cars": {
+                        "type": "array",
+                        "description": "List of car filter groups (OR logic). Each group can contain make, model, trim, price, etc. Only include arguments that are explicitly mentioned or clearly implied by the user; do not add any unspecified fields.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "make": {
+                                    "type": "object",
+                                    "description": "Car manufacturer, e.g., BMW, Toyota, Ford.",
+                                    "properties": {
+                                        "value": { "type": "string" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq", "not", "in"]
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                },
+                                "model": {
+                                    "type": "object",
+                                    "description": "Car model, e.g., M3, Camry, Mustang.",
+                                    "properties": {
+                                        "value": { "type": "string" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq", "not", "in"]
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                },
+                                "trim": {
+                                    "type": "object",
+                                    "description": "Trim level of the car.",
+                                    "properties": {
+                                        "value": { "type": "string" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq", "not"]
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                },
+                                "price": {
+                                    "type": "object",
+                                    "description": "Price filter.",
+                                    "properties": {
+                                        "value": {
+                                            "type": "integer",
+                                            "description": "Exact price value to compare against (used with operator 'eq', 'lt', 'gt', etc.)"
+                                        },
+                                        "min": {
+                                            "type": "integer",
+                                            "description": "Minimum price value for filtering a range. Used when 'operator' is 'between'."
+                                        },
+                                        "max": {
+                                            "type": "integer",
+                                            "description": "Maximum price value for filtering a range. Used when 'operator' is 'between'."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"],
+                                            "description": "Comparison operator. Use 'lt' for less than, 'gt' for greater than, 'eq' for exact match, 'not' to exclude, and 'between' to specify a price range."
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "year": {
+                                    "type": "object",
+                                    "description": "Year filter.",
+                                    "properties": {
+                                        "value": {
+                                            "type": "integer",
+                                            "description": "Exact year to compare against (used with operator 'eq', 'lt', 'gt', etc.)"
+                                        },
+                                        "min": {
+                                            "type": "integer",
+                                            "description": "Minimum year value for filtering a range. Used when 'operator' is 'between'."
+                                        },
+                                        "max": {
+                                            "type": "integer",
+                                            "description": "Maximum year value for filtering a range. Used when 'operator' is 'between'."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"],
+                                            "description": "Comparison operator. Use 'lt' for less than, 'gt' for greater than, 'eq' for exact match, 'not' to exclude, and 'between' to specify a year range."
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "mileage": {
+                                    "type": "object",
+                                    "description": "Mileage filter.",
+                                    "properties": {
+                                        "value": {
+                                            "type": "integer",
+                                            "description": "Exact mileage value to compare against (used with operator 'eq', 'lt', 'gt', etc.)"
+                                        },
+                                        "min": {
+                                            "type": "integer",
+                                            "description": "Minimum mileage value for filtering a range. Used when 'operator' is 'between'."
+                                        },
+                                        "max": {
+                                            "type": "integer",
+                                            "description": "Maximum mileage value for filtering a range. Used when 'operator' is 'between'."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"],
+                                            "description": "Comparison operator. Use 'lt' for less than, 'gt' for greater than, 'eq' for exact match, 'not' to exclude, and 'between' to specify a mileage range."
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "location": {
+                                    "type": "object",
+                                    "description": "Filter based on ZIP codes. This allows including or excluding listings based on one or more ZIP/postal codes. DO NOT include states or sometnig like this in value field.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "description": "An array of ZIP code strings. Each string should represent a valid ZIP or postal code (e.g., '90210', '10001'). These will be used to include or exclude listings based on the specified operator."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "The logic used to apply the ZIP code filter: \n- Use 'in' to include only the listings that are located in the provided ZIP codes. \n- Use 'not_in' to exclude listings from the provided ZIP codes."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "total_seating": {
+                                    "type": "object",
+                                    "description": "Total seating capacity filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "length_in": {
+                                    "type": "object",
+                                    "description": "Length in inches filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "width_in": {
+                                    "type": "object",
+                                    "description": "Width in inches filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "height_in": {
+                                    "type": "object",
+                                    "description": "Height in inches filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "epa_interior_volume_cu_ft": {
+                                    "type": "object",
+                                    "description": "EPA interior volume in cubic feet filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "cargo_capacity_cu_ft": {
+                                    "type": "object",
+                                    "description": "Cargo capacity in cubic feet filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "ground_clearance_in": {
+                                    "type": "object",
+                                    "description": "Ground clearance in inches filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "curb_weight_lbs": {
+                                    "type": "object",
+                                    "description": "Curb weight in pounds filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "maximum_payload_lbs": {
+                                    "type": "object",
+                                    "description": "Maximum payload in pounds filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "maximum_towing_capacity_lbs": {
+                                    "type": "object",
+                                    "description": "Maximum towing capacity in pounds filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "engine_size_l": {
+                                    "type": "object",
+                                    "description": "Engine size in liters filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "horsepower_(hp)": {
+                                    "type": "object",
+                                    "description": "Horsepower filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "torque_ft_lbs": {
+                                    "type": "object",
+                                    "description": "Torque in foot-pounds filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "fuel_tank_capacity_gal": {
+                                    "type": "object",
+                                    "description": "Fuel tank capacity in gallons filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "epa_combined_mpg": {
+                                    "type": "object",
+                                    "description": "EPA combined MPG filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "epa_electricity_range_mi": {
+                                    "type": "object",
+                                    "description": "EPA electricity range in miles filter.",
+                                    "properties": {
+                                        "value": { "type": "integer" },
+                                        "min": { "type": "integer" },
+                                        "max": { "type": "integer" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "battery_capacity_kwh": {
+                                    "type": "object",
+                                    "description": "Battery capacity in kilowatt-hours filter.",
+                                    "properties": {
+                                        "value": { "type": "number" },
+                                        "min": { "type": "number" },
+                                        "max": { "type": "number" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                        }
+                                    },
+                                    "required": ["operator"]
+                                },
+                                "exterior_color": {
+                                    "type": "object",
+                                    "description": "Filter cars by exterior color. You must generalize user input to the closest match among: ['gray', 'white', 'black', 'blue', 'red', 'green', 'tan', 'orange', 'yellow', 'brown', 'purple', 'pink']. Accepts a list of possible colors.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["gray", "white", "black", "blue", "red", "green", "tan", "orange", "yellow", "brown", "purple", "pink"]
+                                            },
+                                            "description": "List of accepted exterior colors."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified colors, 'not_in' to exclude specified colors."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "transmission": {
+                                    "type": "object",
+                                    "description": "Filter cars by transmission type. You must generalize user input to the closest match among: ['automatic', 'manual']. Accepts a list of transmission types. Common synonyms like 'stick shift' or 'standard' should be mapped to 'manual', and 'auto' to 'automatic'.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["automatic", "manual"]
+                                            },
+                                            "description": "List of accepted transmission types."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified transmission types, 'not_in' to exclude specified types."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "drive_type": {
+                                    "type": "object",
+                                    "description": "Filter cars by drive type. You must generalize user input to the closest match among: ['all wheel drive', 'front wheel drive', 'four wheel drive', 'rear wheel drive']. Accepts a list of drive types. Common synonyms like 'awd' should be mapped to 'all wheel drive', '4wd' to 'four wheel drive', etc.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["all wheel drive", "front wheel drive", "four wheel drive", "rear wheel drive"]
+                                            },
+                                            "description": "List of accepted drive types."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified drive types, 'not_in' to exclude specified types."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "cylinders": {
+                                    "type": "object",
+                                    "description": "Filter cars by engine cylinder configuration. You must generalize user input to the closest match among: ['i4', 'v6', 'v8', 'flat 4', 'i6', 'i3', 'flat 6', 'i5', 'v12', 'v10', 'w12', 'i2', 'rotary 0', 'w16']. Accepts a list of cylinder types. Synonyms like 'inline 4' should be mapped to 'i4', 'v-eight' to 'v8', etc.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["i4", "v6", "v8", "flat 4", "i6", "i3", "flat 6", "i5", "v12", "v10", "w12", "i2", "rotary 0", "w16"]
+                                            },
+                                            "description": "List of accepted cylinder configurations."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified cylinder types, 'not_in' to exclude specified types."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "engine_type": {
+                                    "type": "object",
+                                    "description": "Filter cars by engine type. You must generalize user input to the closest match among: ['gas', 'flex-fuel (ffv)', 'plug-in hybrid', 'mild hybrid', 'electric', 'hybrid', 'diesel', 'electric (fuel cell)', 'natural gas (cng)']. Accepts a list of possible engine types. Common synonyms like 'gasoline' or 'petrol' should be mapped to 'gas'.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["gas", "flex-fuel (ffv)", "plug-in hybrid", "mild hybrid", "electric", "hybrid", "diesel", "electric (fuel cell)", "natural gas (cng)"]
+                                            },
+                                            "description": "List of accepted engine types."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified engine types, 'not_in' to exclude specified types."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "country_of_origin": {
+                                    "type": "object",
+                                    "description": "Filter cars by country of origin. You must generalize user input to the closest match among: ['united states', 'japan', 'germany', 'south korea', 'united kingdom', 'sweden', 'italy', 'france']. Accepts a list of countries. Common variants like 'usa', 'america', or 'uk' should be normalized accordingly.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["united states", "japan", "germany", "south korea", "united kingdom", "sweden", "italy", "france"]
+                                            },
+                                            "description": "List of accepted countries of origin."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified countries, 'not_in' to exclude specified countries."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "body_type": {
+                                    "type": "object",
+                                    "description": "Filter cars by body type. You must generalize user input to the closest match among: ['suv', 'sedan', 'truck', 'hatchback', 'van', 'coupe', 'convertible', 'wagon']. Accepts a list of possible body types. Common synonyms like 'sport utility' or 'pickup' should be mapped to 'suv' and 'truck' respectively.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["suv", "sedan", "truck", "hatchback", "van", "coupe", "convertible", "wagon"]
+                                            },
+                                            "description": "List of accepted body types."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "not_in"],
+                                            "description": "Use 'in' to match any of the specified body types, 'not_in' to exclude specified types."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "certified": {
+                                    "type": "object",
+                                    "description": "Filter by whether the car is certified (CPO - Certified Pre-Owned). Set to true if the user explicitly wants certified cars, or false if the user says they do not want certified cars.",
+                                    "properties": {
+                                        "value": {
+                                            "type": "boolean",
+                                            "description": "Whether the user wants certified cars (true) or not (false)."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq"],
+                                            "description": "Use 'eq' to check for exact match of certified status."
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                },
+                                "safety_features": {
+                                    "type": "object",
+                                    "description": "Filter cars by safety features. Accepts a list of safety features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["driver alertness monitoring", "anti-lock braking system (abs)", "airbag systems", "lane departure warning and assist", "blind spot monitoring", "adaptive cruise control", "pre-collision systems", "parking assistance", "rearview and surround cameras", "tire pressure monitoring", "traction and stability control", "security and anti-theft systems", "headlight systems", "emergency braking systems", "child safety features", "seatbelt systems", "vehicle tracking and recovery", "night vision systems", "trailer assistance", "first aid and emergency kits", "inflatable seatbelts", "parking sensors", "360-degree camera systems", "advanced driver assistance systems (adas)", "collision warning systems", "lane keep assist", "dynamic radar cruise control", "side and curtain airbags", "high-performance brakes", "remote start systems", "perimeter alarm systems", "glass breakage sensors", "tire repair kits", "keyless entry systems", "surround view monitoring", "traffic sign recognition", "adaptive headlights", "forward collision warning", "rear cross traffic alert", "automatic parking systems", "roll stability control", "heated and ventilated brakes", "driver fatigue monitoring", "pedestrian detection systems", "wheel theft deterrents", "advanced parking guidance", "dynamic cornering lights", "rear seat safety features", "advanced security packages", "roadside assistance kits", "backup alarms", "cargo protection", "upfitter switches", "turn signal features", "miscellaneous safety features"]
+                                            },
+                                            "description": "List of required safety features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "convenience": {
+                                    "type": "object",
+                                    "description": "Filter cars by convenience features. Accepts a list of convenience features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["power outlets", "steering wheel adjustability", "steering wheel controls", "cupholders", "storage compartments", "rearview and surround cameras", "parking assistance", "power seats with easy entry", "keyless ignition", "cruise control", "power steering", "cargo area features", "universal remote transmitter", "first aid kit", "door pockets", "adaptive cruise control", "retained accessory power", "overhead console", "remote trunk release", "driver-assisted parking", "simulated aerial camera", "wide-angle cameras", "side view cameras", "front view camera", "rear parking sensors", "front and rear parking sensors", "manual seat easy entry", "speed-proportional power steering", "electric power steering", "cargo net"]
+                                            },
+                                            "description": "List of required convenience features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "front_seats": {
+                                    "type": "object",
+                                    "description": "Filter cars by front seat features. Accepts a list of front seat features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["seat material", "seat type", "seat adjustment (manual)", "seat adjustment (power)", "lumbar support", "heated seats", "ventilated/cooled seats", "massaging seats", "thigh extension", "height adjustable seats", "fold-flat seats", "split bench seats", "bucket seats", "captains chairs", "sport seats", "premium seat materials", "multi-level heating", "manual adjustments (driver seat)", "manual adjustments (passenger seat)", "power adjustments (driver seat)", "power adjustments (passenger seat)", "leather seats", "cloth seats", "suede seats", "vinyl seats", "leatherette seats", "alcantara seats", "velour seats", "premium leather seats", "premium cloth seats", "premium suede seats", "premium vinyl seats", "premium alcantara seats", "heated driver seat", "heated passenger seat", "ventilated driver seat", "ventilated passenger seat", "cooled driver seat", "cooled passenger seat", "massaging driver seat", "massaging passenger seat", "driver seat adjustments", "passenger seat adjustments", "bench front seats", "split bench front seats", "bucket front seats", "captains chairs front seats", "sport front seats", "fold-flat passenger seat", "height adjustable driver seat"]
+                                            },
+                                            "description": "List of required front seat features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "rear_seats": {
+                                    "type": "object",
+                                    "description": "Filter cars by rear seat features. Accepts a list of rear seat features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["dual ventilation", "fixed center armrest", "fixed with storage center armrest", "folding center armrest", "folding rear seatback", "folding with pass-thru center armrest", "folding with storage and pass-thru center armrest", "folding with storage center armrest", "folds into floor third row seats", "heated", "manual folding bench third row seats", "manual folding split-bench third row seats", "multi-level heating", "one-piece folding third row seats", "pass-thru center armrest", "power folding bench third row seats", "power folding split-bench third row seats", "rear heater unit", "rear ventilation ducts", "rear ventilation ducts with fan control", "reclining rear seats", "split-folding rear seatback"]
+                                            },
+                                            "description": "List of required rear seat features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "suspension": {
+                                    "type": "object",
+                                    "description": "Filter cars by suspension features. Accepts a list of suspension features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["adjustable stabilizer bar stabilizer bar", "double wishbone front suspension", "double wishbone rear suspension", "four-wheel independent suspension", "front and rear stabilizer bar", "front independent suspension", "independent suspension independent suspension", "integrated stabilizer bar stabilizer bar", "macpherson strut front suspension", "macpherson strut rear suspension", "modified macpherson strut front suspension", "modified macpherson strut rear suspension", "multi-link front suspension", "multi-link rear suspension", "semi-trailing arm rear suspension", "short and long arm front suspension", "short and long arm rear suspension", "solid axle front suspension", "solid axle rear suspension", "solid live axle front suspension", "solid live axle rear suspension", "stabilizer bar stabilizer bar", "torsion beam rear suspension", "twin i-beam front suspension"]
+                                            },
+                                            "description": "List of required suspension features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "power_features": {
+                                    "type": "object",
+                                    "description": "Filter cars by power features. Accepts a list of power features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["1 one-touch power windows", "2 one-touch power windows", "4 one-touch power windows", "digital keypad power door locks", "hands-free entry", "heated mirrors", "power door locks", "power mirrors", "remote keyless power door locks", "remote window operation", "reverse tilt driver mirror provides curb view when vehicle in reverse", "reverse tilt dual mirrors provides curb view when vehicle in reverse", "reverse tilt passenger mirror provides curb view when vehicle in reverse", "reverse tilt passenger only provides curb view when vehicle in reverse"]
+                                            },
+                                            "description": "List of required power features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "comfort": {
+                                    "type": "object",
+                                    "description": "Filter cars by comfort features. Accepts a list of comfort features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["steering wheel features", "knob features", "console trim materials", "dash trim materials", "door trim materials", "climate control systems", "lighting features", "storage and cooling compartments", "mirror features", "air filtration systems", "floor mats", "sun sensor"]
+                                            },
+                                            "description": "List of required comfort features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "entertainment": {
+                                    "type": "object",
+                                    "description": "Filter cars by entertainment features. Accepts a list of entertainment features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["stereo (watts)", "premium brand speakers", "total speakers", "total subwoofers", "antenna", "satellite radio service", "audio/video features", "stereo (type)", "volume controls", "surround audio", "satellite radio"]
+                                            },
+                                            "description": "List of required entertainment features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "roof_and_glass": {
+                                    "type": "object",
+                                    "description": "Filter cars by roof and glass features. Accepts a list of roof and glass features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["extended sunroof", "fixed electrochromatic glass sunroof", "fixed glass rear sunroof", "fixed glass sunroof", "fixed glass third row sunroof", "intermittent rear wiper", "intermittent wipers", "manual convertible roof", "manual glass rear sunroof", "manual glass sunroof", "manual horizontal", "manual rear sunshade", "manual steel sunroof", "manual sunshades for rear side windows", "one-touch power sunroof", "power convertible roof", "power glass (tilt only) rear sunroof", "power glass (tilt only) sunroof", "power glass (tilt only) third row sunroof", "power glass rear sunroof", "power glass sunroof", "power glass third row sunroof", "power horizontal", "power opening rear quarter windows", "power rear sunshade", "power retractable hard top", "power steel sunroof", "power sunshades for rear side windows", "power vertical", "power/removable glass sunroof", "privacy glass", "rear defogger", "rear window wiper", "remote sunroof operation", "removable dual top", "removable glass rear sunroof", "removable hard top", "removable soft top", "roof rack", "solar sunroof", "speed sensitive and rain sensing wipers", "speed sensitive wipers", "swing out opening rear quarter windows", "t-top roof", "targa roof", "variable intermittent rain sensing wipers", "variable intermittent wipers"]
+                                            },
+                                            "description": "List of required roof and glass features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "instrumentation": {
+                                    "type": "object",
+                                    "description": "Filter cars by instrumentation features. Accepts a list of instrumentation features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["clock", "compass", "external temperature display", "low fuel level warning", "tachometer", "trip computer"]
+                                            },
+                                            "description": "List of required instrumentation features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "truck_features": {
+                                    "type": "object",
+                                    "description": "Filter cars by truck-specific features. Accepts a list of truck features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["auxiliary transmission fluid cooler", "chrome finish bumpers", "engine hour meter", "hard bed cover", "light bar", "painted finish bumpers", "power folding steps running boards", "soft bed cover", "step running boards", "tube running boards", "vinyl floor covering"]
+                                            },
+                                            "description": "List of required truck features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                },
+                                "towing_and_hauling": {
+                                    "type": "object",
+                                    "description": "Filter cars by towing and hauling features. Accepts a list of towing and hauling features that the car must have.",
+                                    "properties": {
+                                        "values": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["cargo tie downs", "trailer hitch", "trailer wiring"]
+                                            },
+                                            "description": "List of required towing and hauling features."
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["in", "all", "not_in"],
+                                            "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
+                                        }
+                                    },
+                                    "required": ["values", "operator"]
+                                }
+                            }
+                        }
+                    },
+                    "sort": {
+                        "type": "object",
+                        "description": "Sorting configuration for results. Only numeric fields can be sorted.",
+                        "properties": {
+                            "field": {
+                                "type": "string",
+                                "enum": ["price", "year", "mileage", "total_seating", "length_in", "width_in", "height_in", "epa_interior_volume_cu_ft", "cargo_capacity_cu_ft", "ground_clearance_in", "curb_weight_lbs", "maximum_payload_lbs", "maximum_towing_capacity_lbs", "engine_size_l", "horsepower_hp", "torque_ft_lbs", "fuel_tank_capacity_gal", "epa_combined_mpg", "epa_electricity_range_mi", "battery_capacity_kwh"],
+                                "description": "The field to sort by. Must be a numeric field."
+                            },
+                            "direction": {
+                                "type": "string",
+                                "enum": ["asc", "desc"],
+                                "description": "Sort direction. Use 'asc' for ascending (lowest to highest), 'desc' for descending (highest to lowest)."
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "car_info",
+            "description": "Use this function for simple car-related questions such as horsepower, acceleration, or top speed.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "A natural language question about a car, e.g., 'How much horsepower does a BMW M3 have?'"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "evaluate",
+            "description": "Use this function to evaluate car value, assess pricing, or answer questions about a vehicle's worth. It requires the car's make, model, year, and mileage. Optionally, the trim can be included if explicitly mentioned by the user. Do not infer or assume values for any missing fields.",
+            "parameters":{
+                "type": "object",
+                "properties":{
+                    "make": {
+                        "type": "string",
+                        "description": "Car manufacturer, e.g., BMW, Toyota, Ford."
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": "Car model, e.g., Series 3, Camry, Mustang."
+                    },
+                    "year": {
+                        "type": "integer",
+                        "description": "The production year of the car (e.g., 2020)"
+                    },
+                    "mileage": {
+                        "type": "integer",
+                        "description": "The mileage of the car"
+                    },
+                    "trim": {
+                        "type": "string",
+                        "description": "Trim level of the car."
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type":"function",
+        "function":{
+            "name":"general_knowledge",
+            "description":"Use this function to handle queries that are not specifically related to vehicles—such as general knowledge, everyday questions, or casual conversation. It serves as a fallback for broad or open-ended topics outside the automotive domain",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The original user query that is unrelated to vehicles."
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function":{
+            "name": "car_comparison",
+            "description": "Use this function for queries where 2 or more car models are being compared in any way.",
+            "parameters":{
+                "type": "object",
+                "properties": {
+                    "cars": {
+                        "type": "array",
+                        "description": "List of cars to compare. Each item should contain details such as make, model, year, and optionally trim.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "make": {
+                                    "type": "object",
+                                    "description": "Car manufacturer, e.g., BMW, Toyota, Ford.",
+                                    "properties": {
+                                        "value": { "type": "string" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq"]
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                },
+                                "model": {
+                                    "type": "object",
+                                    "description": "Car model, e.g., Series 3, Camry, Mustang.",
+                                    "properties": {
+                                        "value": { "type": "string" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq"]
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                },
+                                "trim": {
+                                    "type": "object",
+                                    "description": "Trim level of the car.",
+                                    "properties": {
+                                        "value": { "type": "string" },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": ["eq"]
+                                        }
+                                    },
+                                    "required": ["value", "operator"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "analyze_url",
+            "description": "Use this function when the user provides a valid URL and expects an analysis, summarization, or specific information to be extracted from the linked content. This may include webpages, articles, product listings, or other online resources.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "provided_link": {
+                        "type": "string",
+                        "description": "The full URL to be analyzed. This should be a valid link to an online page or resource provided by the user."
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "A natural language question or instruction related to the content of the URL. For example, 'summarize this page', 'extract product price', or 'who is the author?'."
+                    }
+                },
+                "required": ["provided_link", "query"]
+            }
+        }
+    }
+]

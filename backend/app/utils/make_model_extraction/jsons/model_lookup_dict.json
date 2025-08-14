@@ -1,0 +1,74 @@
+{
+    "mercedes-benz": {
+        "g class": "g-class",
+        "gla class": "gla-class",
+        "gla": "gla-class",
+        "glb" : "glb-class",
+        "glb class": "glb-class",
+        "glc class": "glc-class",
+        "glc": "glc-class",
+        "a class": "a-class",
+        "b class": "b-class",
+        "c class": "c-class",
+        "cla class": "cla-class",
+        "cla": "cla-class",
+        "cl class": "cl-class",
+        "cl": "cl-class",
+        "clk class": "clk-class",
+        "clk": "clk-class",
+        "cls class": "cls-class",
+        "cls": "cls-class",
+        "cle": "cle-class",
+        "e class": "e-class",
+        "eqb": "eqb-class",
+        "eqb class": "eqb-class",
+        "eqe class": "eqe-class",
+        "eqe": "eqe-class",
+        "eqs class": "eqs-class",
+        "eqs": "eqs-class",
+        "gl class": "gl-class",
+        "gl": "gl-class",
+        "gle class": "gle-class",
+        "gle": "gle-class",
+        "glk class": "glk-class",
+        "glk": "glk-class",
+        "gls class": "gls-class",
+        "gls": "gls-class",
+        "ml": "m-class",
+        "r class": "r-class",
+        "s class": "s-class",
+        "slc class": "slc-class",
+        "sl class": "sl-class",
+        "sl": "sl-class",
+        "slk class": "slk-class",
+        "slk": "slk-class"
+    },
+    "bmw": {
+        "1-series": "1 series",
+        "2-series": "2 series",
+        "3-series": "3 series",
+        "4-series": "4 series",
+        "5-series": "5 series",
+        "6-series": "6 series",
+        "7-series": "7 series",
+        "8-series": "8 series"
+    },
+    "bugatti": {
+        "veyron": "veyron 16.4"
+    }, 
+    "audi": {
+        "a4 wagon": "a4 allroad",
+        "a6 wagon": "a6 allroad" 
+    }, 
+    "ford": {
+        "f-450" : "f-450 super duty",
+        "500" : "five hundred"
+    }, 
+    "ferrari": {
+        "430" : "430 scuderia",
+        "458" : "458 italia",
+        "612" : "612 scaglietti",
+        "812" : "812 superfast",
+        "f12" : "f12 berlinetta"
+    }
+}
