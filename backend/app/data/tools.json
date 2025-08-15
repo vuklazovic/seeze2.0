@@ -52,75 +52,123 @@
                                 "price": {
                                     "type": "object",
                                     "description": "Price filter.",
-                                    "properties": {
-                                        "value": {
-                                            "type": "integer",
-                                            "description": "Exact price value to compare against (used with operator 'eq', 'lt', 'gt', etc.)"
-                                        },
-                                        "min": {
-                                            "type": "integer",
-                                            "description": "Minimum price value for filtering a range. Used when 'operator' is 'between'."
-                                        },
-                                        "max": {
-                                            "type": "integer",
-                                            "description": "Maximum price value for filtering a range. Used when 'operator' is 'between'."
-                                        },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"],
-                                            "description": "Comparison operator. Use 'lt' for less than, 'gt' for greater than, 'eq' for exact match, 'not' to exclude, and 'between' to specify a price range."
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single value checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact price value to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a price range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum price value."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum price value."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
                                 "year": {
-                                    "type": "object",
-                                    "description": "Year filter.",
+                                "type": "object",
+                                "description": "Year filter.",
+                                "oneOf": [
+                                    {
                                     "properties": {
-                                        "value": {
-                                            "type": "integer",
-                                            "description": "Exact year to compare against (used with operator 'eq', 'lt', 'gt', etc.)"
-                                        },
-                                        "min": {
-                                            "type": "integer",
-                                            "description": "Minimum year value for filtering a range. Used when 'operator' is 'between'."
-                                        },
-                                        "max": {
-                                            "type": "integer",
-                                            "description": "Maximum year value for filtering a range. Used when 'operator' is 'between'."
-                                        },
                                         "operator": {
-                                            "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"],
-                                            "description": "Comparison operator. Use 'lt' for less than, 'gt' for greater than, 'eq' for exact match, 'not' to exclude, and 'between' to specify a year range."
+                                        "type": "string",
+                                        "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                        "description": "Comparison operator for single year checks."
+                                        },
+                                        "value": {
+                                        "type": "integer",
+                                        "description": "Exact year to compare against."
                                         }
                                     },
-                                    "required": ["operator"]
+                                    "required": ["operator", "value"],
+                                    "additionalProperties": false
+                                    },
+                                    {
+                                    "properties": {
+                                        "operator": {
+                                        "type": "string",
+                                        "enum": ["between"],
+                                        "description": "Use 'between' to specify a year range."
+                                        },
+                                        "min": {
+                                        "type": "integer",
+                                        "description": "Minimum year value."
+                                        },
+                                        "max": {
+                                        "type": "integer",
+                                        "description": "Maximum year value."
+                                        }
+                                    },
+                                    "required": ["operator", "min", "max"],
+                                    "additionalProperties": false
+                                    }
+                                ]
                                 },
                                 "mileage": {
                                     "type": "object",
                                     "description": "Mileage filter.",
-                                    "properties": {
-                                        "value": {
-                                            "type": "integer",
-                                            "description": "Exact mileage value to compare against (used with operator 'eq', 'lt', 'gt', etc.)"
-                                        },
-                                        "min": {
-                                            "type": "integer",
-                                            "description": "Minimum mileage value for filtering a range. Used when 'operator' is 'between'."
-                                        },
-                                        "max": {
-                                            "type": "integer",
-                                            "description": "Maximum mileage value for filtering a range. Used when 'operator' is 'between'."
-                                        },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"],
-                                            "description": "Comparison operator. Use 'lt' for less than, 'gt' for greater than, 'eq' for exact match, 'not' to exclude, and 'between' to specify a mileage range."
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single mileage checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact mileage value to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a mileage range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum mileage value."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum mileage value."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
+                                    ]
                                     },
-                                    "required": ["operator"]
-                                },
                                 "location": {
                                     "type": "object",
                                     "description": "Filter based on ZIP codes. This allows including or excluding listings based on one or more ZIP/postal codes. DO NOT include states or sometnig like this in value field.",
@@ -143,240 +191,682 @@
                                 "total_seating": {
                                     "type": "object",
                                     "description": "Total seating capacity filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single seating capacity checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact seating capacity to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a seating capacity range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum seating capacity."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum seating capacity."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "length_in": {
+                                "length_(in)": {
                                     "type": "object",
                                     "description": "Length in inches filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single length checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact length in inches to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a length range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum length in inches."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum length in inches."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "width_in": {
+                                "width_(in)": {
                                     "type": "object",
                                     "description": "Width in inches filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single width checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact width in inches to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a width range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum width in inches."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum width in inches."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "height_in": {
+                                "height_(in)": {
                                     "type": "object",
                                     "description": "Height in inches filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single height checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact height in inches to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a height range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum height in inches."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum height in inches."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "epa_interior_volume_cu_ft": {
+                                "epa_interior_volume_(cu-ft)": {
                                     "type": "object",
                                     "description": "EPA interior volume in cubic feet filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single interior volume checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact interior volume in cubic feet to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify an interior volume range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum interior volume in cubic feet."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum interior volume in cubic feet."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "cargo_capacity_cu_ft": {
+                                "cargo_capacity_(cu-ft)": {
                                     "type": "object",
                                     "description": "Cargo capacity in cubic feet filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single cargo capacity checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact cargo capacity in cubic feet to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a cargo capacity range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum cargo capacity in cubic feet."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum cargo capacity in cubic feet."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "ground_clearance_in": {
+                                "ground_clearance_(in)": {
                                     "type": "object",
                                     "description": "Ground clearance in inches filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single ground clearance checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact ground clearance in inches to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a ground clearance range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum ground clearance in inches."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum ground clearance in inches."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "curb_weight_lbs": {
+                                "curb_weight_(lbs)": {
                                     "type": "object",
                                     "description": "Curb weight in pounds filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single curb weight checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact curb weight in pounds to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a curb weight range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum curb weight in pounds."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum curb weight in pounds."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "maximum_payload_lbs": {
+                                "maximum_payload_(lbs)": {
                                     "type": "object",
                                     "description": "Maximum payload in pounds filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single maximum payload checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact maximum payload in pounds to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a maximum payload range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum maximum payload in pounds."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum maximum payload in pounds."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "maximum_towing_capacity_lbs": {
+                                "maximum_towing_capacity_(lbs)": {
                                     "type": "object",
                                     "description": "Maximum towing capacity in pounds filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single towing capacity checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact maximum towing capacity in pounds to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a towing capacity range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum maximum towing capacity in pounds."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum maximum towing capacity in pounds."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "engine_size_l": {
+                                "engine_size_(l)": {
                                     "type": "object",
                                     "description": "Engine size in liters filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single engine size checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact engine size in liters to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify an engine size range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum engine size in liters."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum engine size in liters."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
                                 "horsepower_(hp)": {
                                     "type": "object",
                                     "description": "Horsepower filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single horsepower checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact horsepower value to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a horsepower range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum horsepower value."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum horsepower value."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "torque_ft_lbs": {
+                                "torque_(ft-lbs)": {
                                     "type": "object",
                                     "description": "Torque in foot-pounds filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single torque checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact torque value in foot-pounds to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a torque range."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum torque value in foot-pounds."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum torque value in foot-pounds."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "fuel_tank_capacity_gal": {
+                                "fuel_tank_capacity_(gal)": {
                                     "type": "object",
                                     "description": "Fuel tank capacity in gallons filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single fuel tank capacity checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact fuel tank capacity in gallons to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a fuel tank capacity range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum fuel tank capacity in gallons."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum fuel tank capacity in gallons."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
                                 "epa_combined_mpg": {
                                     "type": "object",
                                     "description": "EPA combined MPG filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single MPG checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact EPA combined MPG value to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify an MPG range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum EPA combined MPG."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum EPA combined MPG."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "epa_electricity_range_mi": {
+                                "epa_electricity_range_(mi)": {
                                     "type": "object",
                                     "description": "EPA electricity range in miles filter.",
-                                    "properties": {
-                                        "value": { "type": "integer" },
-                                        "min": { "type": "integer" },
-                                        "max": { "type": "integer" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single electricity range checks."
+                                            },
+                                            "value": {
+                                            "type": "integer",
+                                            "description": "Exact EPA electricity range in miles to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify an electricity range in miles."
+                                            },
+                                            "min": {
+                                            "type": "integer",
+                                            "description": "Minimum EPA electricity range in miles."
+                                            },
+                                            "max": {
+                                            "type": "integer",
+                                            "description": "Maximum EPA electricity range in miles."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
-                                "battery_capacity_kwh": {
+                                "battery_capacity_(kwh)": {
                                     "type": "object",
                                     "description": "Battery capacity in kilowatt-hours filter.",
-                                    "properties": {
-                                        "value": { "type": "number" },
-                                        "min": { "type": "number" },
-                                        "max": { "type": "number" },
-                                        "operator": {
+                                    "oneOf": [
+                                        {
+                                        "properties": {
+                                            "operator": {
                                             "type": "string",
-                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not", "between"]
+                                            "enum": ["lt", "lte", "gt", "gte", "eq", "not"],
+                                            "description": "Comparison operator for single battery capacity checks."
+                                            },
+                                            "value": {
+                                            "type": "number",
+                                            "description": "Exact battery capacity in kilowatt-hours to compare against."
+                                            }
+                                        },
+                                        "required": ["operator", "value"],
+                                        "additionalProperties": false
+                                        },
+                                        {
+                                        "properties": {
+                                            "operator": {
+                                            "type": "string",
+                                            "enum": ["between"],
+                                            "description": "Use 'between' to specify a battery capacity range."
+                                            },
+                                            "min": {
+                                            "type": "number",
+                                            "description": "Minimum battery capacity in kilowatt-hours."
+                                            },
+                                            "max": {
+                                            "type": "number",
+                                            "description": "Maximum battery capacity in kilowatt-hours."
+                                            }
+                                        },
+                                        "required": ["operator", "min", "max"],
+                                        "additionalProperties": false
                                         }
-                                    },
-                                    "required": ["operator"]
+                                    ]
                                 },
                                 "exterior_color": {
                                     "type": "object",
@@ -548,7 +1038,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -568,7 +1058,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -588,7 +1078,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -608,7 +1098,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -628,7 +1118,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -648,7 +1138,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -668,7 +1158,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -688,7 +1178,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -708,7 +1198,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -728,7 +1218,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -748,7 +1238,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -768,7 +1258,7 @@
                                         },
                                         "operator": {
                                             "type": "string",
-                                            "enum": ["in", "all", "not_in"],
+                                            "enum": ["in", "not_in"],
                                             "description": "Use 'in' to match cars with any of the specified features, 'all' to require all specified features, 'not_in' to exclude cars with any of the specified features."
                                         }
                                     },
@@ -783,7 +1273,7 @@
                         "properties": {
                             "field": {
                                 "type": "string",
-                                "enum": ["price", "year", "mileage", "total_seating", "length_in", "width_in", "height_in", "epa_interior_volume_cu_ft", "cargo_capacity_cu_ft", "ground_clearance_in", "curb_weight_lbs", "maximum_payload_lbs", "maximum_towing_capacity_lbs", "engine_size_l", "horsepower_hp", "torque_ft_lbs", "fuel_tank_capacity_gal", "epa_combined_mpg", "epa_electricity_range_mi", "battery_capacity_kwh"],
+                                "enum": ["price", "year", "mileage", "total_seating", "length_(in)", "width_(in)", "height_(in)", "epa_interior_volume_(cu-ft)", "cargo_capacity_(cu-ft)", "ground_clearance_(in)", "curb_weight_(lbs)", "maximum_payload_(lbs)", "maximum_towing_capacity_(lbs)", "engine_size_(l)", "horsepower_hp", "torque_(ft-lbs)", "fuel_tank_capacity_(gal)", "epa_combined_mpg", "epa_electricity_range_(mi)", "battery_capacity_(kwh)"],
                                 "description": "The field to sort by. Must be a numeric field."
                             },
                             "direction": {
